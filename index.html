@@ -1,492 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Goal Machine v5.0</title>
+<meta name="theme-color" content="#000000"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
 :root{
-  /* Modern mobile social UI: X/TikTok dark base + restrained Instagram warmth */
-  --bg:#050507;
-  --surface:#0a0d12;
-  --card:#12161d;
-  --card2:#181d26;
-  --field:#0d1118;
-  --field2:#10151d;
-
-  --border:#242a35;
-  --border2:#333b49;
-  --borderFocus:#ff8a3d;
-
-  --ink:#f4f6f8;
-  --ink2:#d7dce3;
-  --muted:#9aa3af;
-  --dim:#717985;
-  --dim2:#58606c;
-
-  --accent:#ff7a2f;
-  --accent2:#ff9f45;
-  --accentSoft:rgba(255,122,47,.14);
-
-  --green:#00c781;
-  --red:#ff375f;
-  --blue:#1d9bf0;
-
-  --shadow:0 18px 45px rgba(0,0,0,.38);
-  --shadowSoft:0 10px 30px rgba(255,122,47,.10);
+  --bg:#000;--surface:#0a0a0a;--card:#111;--card2:#191919;
+  --border:#222;--border2:#2a2a2a;
+  --ink:#e7e9ea;--ink2:#d6d9db;--dim:#71767b;--dim2:#536471;
+  --accent:#e8912e;--accent2:#c47520;
+  --green:#00ba7c;--red:#f4212e;
 }
-
-html{
-  background:var(--bg);
-  color:var(--ink);
-  font-family:'Inter',-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",system-ui,sans-serif;
-  font-size:15px;
-  line-height:1.5;
-  -webkit-font-smoothing:antialiased;
-  -webkit-text-size-adjust:100%;
-  overflow-x:hidden;
-}
-
-body{
-  min-height:100dvh;
-  background:
-    radial-gradient(circle at 20% -10%,rgba(255,122,47,.10),transparent 28%),
-    radial-gradient(circle at 90% 10%,rgba(29,155,240,.08),transparent 24%),
-    var(--bg);
-  overflow-x:hidden;
-}
-
-input,
-textarea,
-button{
-  font-family:inherit;
-  font-size:inherit;
-}
-
-#root{
-  width:100%;
-  max-width:520px;
-  margin:0 auto;
-  padding:0 16px 88px;
-  overflow-x:hidden;
-}
+html{background:var(--bg);color:var(--ink);font-family:'Inter',-apple-system,system-ui,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{min-height:100dvh}
+input,textarea,button{font-family:inherit;font-size:inherit}
+#root{max-width:520px;margin:0 auto;padding:0 16px 80px}
 
 /* Cards */
-.card{
-  width:100%;
-  max-width:100%;
-  overflow:hidden;
-  background:linear-gradient(180deg,var(--card),#10141b);
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:18px;
-  margin-bottom:14px;
-  box-shadow:0 1px 0 rgba(255,255,255,.03) inset;
-}
-
-.card:has(.input:focus),
-.card:has(.textarea:focus){
-  border-color:rgba(255,122,47,.42);
-  box-shadow:var(--shadowSoft);
-}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
 
 /* Inputs */
-.input,
-.textarea{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  background:var(--field);
-  border:1px solid var(--border2);
-  border-radius:16px;
-  color:var(--ink);
-  outline:none;
-  transition:border-color .15s,background .15s,box-shadow .15s;
-  -webkit-appearance:none;
-  appearance:none;
-  box-shadow:0 1px 0 rgba(255,255,255,.025) inset;
-}
-
-.input{
-  min-height:52px;
-  padding:13px 15px;
-  font-size:16px;
-  line-height:1.35;
-}
-
-.textarea{
-  padding:13px 15px;
-  font-size:15px;
-  line-height:1.45;
-  resize:vertical;
-  min-height:76px;
-}
-
-.input:focus,
-.textarea:focus{
-  background:var(--field2);
-  border-color:var(--borderFocus);
-  box-shadow:0 0 0 4px rgba(255,122,47,.10);
-}
-
-.input::placeholder,
-.textarea::placeholder{
-  color:var(--muted);
-}
-
-/* Critical mobile overflow fix for date input */
-input[type="date"]{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  min-height:52px;
-  line-height:normal;
-  overflow:hidden;
-  color-scheme:dark;
-  position:relative;
-}
-
-input[type="date"]::-webkit-date-and-time-value{
-  text-align:left;
-  max-width:100%;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator{
-  filter:invert(1);
-  opacity:.7;
-  padding:4px;
-  margin-left:4px;
-}
+.input{display:block;width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--ink);padding:12px 14px;font-size:16px;outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none;line-height:1.4}
+.input:focus{border-color:var(--accent)}
+.input::placeholder{color:var(--dim)}
+.textarea{display:block;width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;color:var(--ink);padding:12px 14px;font-size:15px;outline:none;resize:vertical;min-height:70px;transition:border-color .15s;-webkit-appearance:none;line-height:1.4}
+.textarea:focus{border-color:var(--accent)}
+.textarea::placeholder{color:var(--dim)}
+input[type="date"]{display:block;width:100%;min-height:48px;line-height:48px}
 
 /* Buttons */
-.btn{
-  display:block;
-  width:100%;
-  max-width:100%;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;
-  border:none;
-  border-radius:9999px;
-  padding:15px 20px;
-  font-size:16px;
-  font-weight:800;
-  cursor:pointer;
-  transition:transform .12s,opacity .12s,filter .12s;
-  box-shadow:0 12px 28px rgba(255,122,47,.24);
-}
-
-.btn:active{
-  transform:scale(.985);
-  opacity:.9;
-}
-
-.btn:disabled{
-  opacity:.35;
-  cursor:default;
-  box-shadow:none;
-}
-
-.btn-done{
-  background:linear-gradient(135deg,var(--green),#12d89a);
-  box-shadow:0 12px 28px rgba(0,199,129,.22);
-}
-
-.btn-sec{
-  display:inline-block;
-  max-width:100%;
-  background:rgba(255,255,255,.03);
-  color:var(--accent2);
-  border:1px solid var(--border2);
-  border-radius:9999px;
-  padding:10px 18px;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  transition:background .12s,border-color .12s,transform .12s;
-}
-
-.btn-sec:active{
-  background:rgba(255,255,255,.07);
-  transform:scale(.985);
-}
+.btn{display:block;width:100%;background:var(--accent);color:#fff;border:none;border-radius:9999px;padding:14px 20px;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .12s}
+.btn:active{opacity:.85}
+.btn:disabled{opacity:.3;cursor:default}
+.btn-done{background:var(--green)}
+.btn-sec{display:inline-block;background:transparent;color:var(--accent);border:1px solid var(--border2);border-radius:9999px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;transition:background .12s}
+.btn-sec:active{background:var(--card2)}
 
 /* Labels & text */
-.label{
-  display:block;
-  font-size:13px;
-  font-weight:800;
-  color:var(--muted);
-  margin-bottom:7px;
-  letter-spacing:.075em;
-  text-transform:uppercase;
-}
-
-.hint{
-  font-size:13px;
-  color:var(--muted);
-  margin-top:8px;
-  line-height:1.55;
-}
-
-.tag{
-  display:inline-flex;
-  align-items:center;
-  width:max-content;
-  max-width:100%;
-  font-size:12px;
-  font-weight:900;
-  color:var(--accent2);
-  letter-spacing:.17em;
-  text-transform:uppercase;
-  background:var(--accentSoft);
-  border:1px solid rgba(255,122,47,.16);
-  border-radius:9999px;
-  padding:7px 13px;
-}
-
-.h1{
-  font-size:25px;
-  font-weight:900;
-  letter-spacing:-.045em;
-  line-height:1.12;
-  color:var(--ink);
-}
-
-.h3{
-  font-size:15px;
-  font-weight:800;
-  color:var(--ink);
-}
-
-.pill{
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.06em;
-  padding:4px 10px;
-  border-radius:9999px;
-  display:inline-block;
-  text-transform:uppercase;
-}
+.label{display:block;font-size:13px;font-weight:600;color:var(--dim);margin-bottom:6px}
+.hint{font-size:13px;color:var(--dim);margin-top:6px;line-height:1.5}
+.tag{display:inline-block;font-size:13px;font-weight:700;color:var(--accent)}
+.h1{font-size:24px;font-weight:800;letter-spacing:-.03em;line-height:1.15;color:var(--ink)}
+.h3{font-size:15px;font-weight:700;color:var(--ink)}
+.pill{font-size:12px;font-weight:700;padding:2px 10px;border-radius:9999px;display:inline-block}
 
 /* Layout */
-.row{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  min-width:0;
-}
-
-.spacer{
-  height:16px;
-}
-
-.divider{
-  height:1px;
-  background:var(--border);
-  margin:22px 0;
-}
-
-.field{
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  margin-bottom:17px;
-}
-
-/* Fix side-by-side inputs from overflowing on small screens */
-.field[style*="display:flex"],
-div[style*="display: flex"]{
-  min-width:0;
-}
-
-.field > div{
-  min-width:0;
-}
+.row{display:flex;gap:8px;align-items:center}
+.spacer{height:16px}
+.divider{height:1px;background:var(--border);margin:20px 0}
+.field{margin-bottom:16px}
 
 /* Nav */
-.nav{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(5,5,7,.88);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  border-top:1px solid var(--border);
-  display:flex;
-  z-index:100;
-  padding:0 0 env(safe-area-inset-bottom);
-}
-
-.nav button{
-  flex:1;
-  min-width:0;
-  padding:10px 0 8px;
-  background:transparent;
-  border:none;
-  color:var(--dim);
-  font-size:11px;
-  font-weight:700;
-  cursor:pointer;
-  text-align:center;
-}
-
-.nav button.active{
-  color:var(--accent2);
-}
-
-.nav-icon{
-  font-size:20px;
-  display:block;
-  line-height:1;
-  margin-bottom:2px;
-}
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);display:flex;z-index:100;padding:0 0 env(safe-area-inset-bottom)}
+.nav button{flex:1;padding:10px 0 8px;background:transparent;border:none;color:var(--dim);font-size:11px;font-weight:500;cursor:pointer;text-align:center}
+.nav button.active{color:var(--accent)}
+.nav-icon{font-size:20px;display:block;line-height:1;margin-bottom:2px}
 
 /* Progress */
-.prog-track{
-  background:var(--card2);
-  height:5px;
-  border-radius:999px;
-  overflow:hidden;
-}
-
-.prog-fill{
-  height:100%;
-  border-radius:999px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2));
-  transition:width .3s;
-}
-
-.prog-fill-green{
-  background:linear-gradient(90deg,var(--green),#12d89a);
-}
+.prog-track{background:var(--card2);height:4px;border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .3s}
+.prog-fill-green{background:var(--green)}
 
 /* Stats */
-.stat-box{
-  flex:1;
-  min-width:0;
-  text-align:center;
-  padding:15px 6px;
-}
-
-.stat-val{
-  font-size:23px;
-  font-weight:900;
-  letter-spacing:-.03em;
-}
-
-.stat-label{
-  font-size:10px;
-  color:var(--muted);
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.08em;
-  margin-top:3px;
-}
+.stat-box{flex:1;text-align:center;padding:14px 6px}
+.stat-val{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.stat-label{font-size:11px;color:var(--dim);font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 
 /* Checkbox */
-input[type="checkbox"]{
-  width:20px;
-  height:20px;
-  accent-color:var(--accent);
-  cursor:pointer;
-}
+input[type="checkbox"]{width:20px;height:20px;accent-color:var(--accent);cursor:pointer}
 
 /* Action items */
-.action-item{
-  padding:14px 0;
-}
-
-.action-item+.action-item{
-  border-top:1px solid var(--border);
-}
-
-.action-checks{
-  display:flex;
-  flex-wrap:wrap;
-  gap:14px;
-  padding-left:28px;
-  margin-top:9px;
-}
-
-.action-checks label{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:14px;
-  color:var(--muted);
-  cursor:pointer;
-  user-select:none;
-}
-
-.action-done{
-  opacity:.48;
-  text-decoration:line-through;
-}
+.action-item{padding:14px 0}
+.action-item+.action-item{border-top:1px solid var(--border)}
+.action-checks{display:flex;gap:16px;padding-left:28px;margin-top:8px}
+.action-checks label{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--dim);cursor:pointer;user-select:none}
+.action-done{opacity:.4;text-decoration:line-through}
 
 /* Dot */
-.dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  display:inline-block;
-  margin-right:10px;
-  flex-shrink:0;
-  box-shadow:0 0 18px rgba(255,122,47,.38);
-}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:10px;flex-shrink:0}
 
-/* Prevent any child from pushing outside the phone viewport */
-.card *,
-#root *{
-  max-width:100%;
-}
-
-svg{
-  max-width:100%;
-}
-
-/* Mobile polish */
-@media(max-width:430px){
-  #root{
-    padding-left:14px;
-    padding-right:14px;
-  }
-
-  .card{
-    border-radius:21px;
-    padding:17px;
-  }
-
-  .input{
-    font-size:16px;
-    padding-left:14px;
-    padding-right:14px;
-  }
-
-  .textarea{
-    font-size:15px;
-  }
-}
-
-@media(max-width:380px){
-  #root{
-    padding-left:12px;
-    padding-right:12px;
-  }
-
-  .h1{
-    font-size:22px;
-  }
-
-  .stat-val{
-    font-size:19px;
-  }
-
-  .card{
-    padding:15px;
-    border-radius:19px;
-  }
-
-  .input{
-    min-height:50px;
-  }
-}
+@media(max-width:380px){.h1{font-size:21px}.stat-val{font-size:18px}}
 </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect} = React;
+const SK="goal-machine-v5";
+const db={
+  load(){try{const d=localStorage.getItem(SK);return d?JSON.parse(d):null}catch{return null}},
+  save(d){try{localStorage.setItem(SK,JSON.stringify(d))}catch(e){console.error(e)}}
+};
+const today=()=>new Date().toISOString().slice(0,10);
+const daysB=(a,b)=>Math.max(0,Math.ceil((new Date(b)-new Date(a))/864e5));
+const pct=(v,t)=>t>0?Math.min(100,Math.round(v/t*100)):0;
+
+function BarChart({data,quota,height=120}){
+  if(!data.length)return null;
+  const max=Math.max(quota,...data.map(d=>d.v))||1;
+  const w=100/data.length;
+  return(
+    <svg viewBox={`0 0 100 ${height}`} style={{width:"100%",height}} preserveAspectRatio="none">
+      {data.map((d,i)=>{
+        const h=Math.max(1,(d.v/max)*(height-16));
+        const fill=d.v>=quota?"#00ba7c":d.v>0?"#e8912e":"#f4212e";
+        return <rect key={i} x={i*w+w*.15} y={height-h} width={w*.7} height={h} fill={fill} rx="2"/>;
+      })}
+      <line x1="0" y1={height-(quota/max)*(height-16)} x2="100" y2={height-(quota/max)*(height-16)} stroke="#e8912e" strokeWidth=".4" strokeDasharray="2,2" opacity=".5"/>
+    </svg>
+  );
+}
+
+function AreaChartSVG({data,height=140}){
+  if(data.length<2)return null;
+  const vals=data.map(d=>d.v),tgts=data.map(d=>d.t);
+  const all=[...vals,...tgts];
+  const min=Math.min(...all),max=Math.max(...all)||1,range=max-min||1;
+  const px=i=>(i/(data.length-1))*100;
+  const py=v=>height-20-((v-min)/range)*(height-30);
+  const ap=data.map((d,i)=>`${i===0?"M":"L"}${px(i)},${py(d.v)}`).join(" ");
+  const area=ap+` L100,${height-20} L0,${height-20} Z`;
+  const tp=data.map((d,i)=>`${i===0?"M":"L"}${px(i)},${py(d.t)}`).join(" ");
+  return(
+    <svg viewBox={`0 0 100 ${height}`} style={{width:"100%",height}} preserveAspectRatio="none">
+      <defs><linearGradient id="aF" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#e8912e" stopOpacity=".15"/><stop offset="100%" stopColor="#e8912e" stopOpacity="0"/></linearGradient></defs>
+      <path d={area} fill="url(#aF)"/>
+      <path d={tp} fill="none" stroke="#222" strokeWidth=".6" strokeDasharray="3,3"/>
+      <path d={ap} fill="none" stroke="#e8912e" strokeWidth="1.5" strokeLinecap="round"/>
+      {data.map((d,i)=><circle key={i} cx={px(i)} cy={py(d.v)} r="2" fill="#e8912e"/>)}
+    </svg>
+  );
+}
+
+function ProgressRing({percent,size=120,stroke=6,color="#e8912e"}){
+  const r=(size-stroke)/2,c=2*Math.PI*r,o=c-(Math.min(percent,100)/100)*c;
+  return(
+    <svg width={size} height={size} style={{transform:"rotate(-90deg)"}}>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="#191919" strokeWidth={stroke}/>
+      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeDasharray={c} strokeDashoffset={o} strokeLinecap="round" style={{transition:"stroke-dashoffset .6s ease"}}/>
+    </svg>
+  );
+}
+
+function GapGauge({gapPct}){
+  const phase=gapPct>60?"REBUILD":gapPct>25?"ADJUST":"FINE-TUNE";
+  const color=gapPct>60?"#f4212e":gapPct>25?"#e8912e":"#00ba7c";
+  return(
+    <div className="card">
+      <div className="row" style={{justifyContent:"space-between",marginBottom:10}}>
+        <span className="h3">Correction</span>
+        <span className="pill" style={{color,background:color+"15"}}>{phase}</span>
+      </div>
+      <div style={{background:"var(--card2)",height:6,borderRadius:3,overflow:"hidden"}}>
+        <div style={{height:"100%",borderRadius:3,width:Math.min(100,Math.max(5,gapPct))+"%",background:color,transition:"width .4s"}}/>
+      </div>
+      <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--dim)",marginTop:8}}>
+        <span>Fine-tune</span><span>Adjust</span><span>Rebuild</span>
+      </div>
+    </div>
+  );
+}
+
+// ━━━ SETUP ━━━
+function SetupView({config,onSave}){
+  const def={goal:"",deadline:"",metric:"",targetValue:"",currentValue:"0",dailyQuota:"",actions:[{id:1,name:""}],rules:[{signal:"",response:""}]};
+  const example={goal:"Lose 20 pounds",deadline:new Date(Date.now()+90*864e5).toISOString().slice(0,10),metric:"Scale weight (lbs)",targetValue:"180",currentValue:"200",dailyQuota:"4",actions:[{id:1,name:"Hit calorie target (under 2000)"},{id:2,name:"30 min workout"},{id:3,name:"10,000 steps"},{id:4,name:"Log all meals"}],rules:[{signal:"I miss a workout",response:"Do 15 min bodyweight session — something beats nothing"},{signal:"Weight stalls for 2 weeks",response:"Cut 200 more calories or add one extra walk per day"}]};
+  const[f,setF]=useState(config||def);
+  const u=(k,v)=>setF(p=>({...p,[k]:v}));
+  const uA=(i,v)=>{const a=[...f.actions];a[i]={...a[i],name:v};u("actions",a)};
+  const aA=()=>u("actions",[...f.actions,{id:Date.now(),name:""}]);
+  const rA=(i)=>u("actions",f.actions.filter((_,j)=>j!==i));
+  const uR=(i,k,v)=>{const r=[...f.rules];r[i]={...r[i],[k]:v};u("rules",r)};
+  const aR=()=>u("rules",[...f.rules,{signal:"",response:""}]);
+  const rR=(i)=>u("rules",f.rules.filter((_,j)=>j!==i));
+  const ok=f.goal&&f.deadline&&f.metric&&f.targetValue&&f.dailyQuota;
+
+  return(
+    <div>
+      <div style={{padding:"40px 0 24px"}}>
+        <h1 style={{fontSize:28,fontWeight:900,letterSpacing:"-.04em",color:"var(--ink)"}}>Goal Machine</h1>
+        <p style={{color:"var(--dim)",marginTop:8,fontSize:15,lineHeight:1.6}}>Most goals fail because you rely on willpower. This replaces willpower with structure — the right action happens daily, with feedback and correction built in.</p>
+      </div>
+
+      <button onClick={()=>setF(example)} className="btn-sec" style={{width:"100%",marginBottom:16,borderStyle:"dashed"}}>Load an example to see how it works</button>
+
+      <div className="card" style={{borderColor:"var(--border2)"}}>
+        <p style={{fontSize:14,fontWeight:600,color:"var(--accent)",marginBottom:12}}>Before you start — three checks:</p>
+        {["Can you measure the result with a number?","Do people actually succeed doing it this way?","Can you do something every day that moves it forward?"].map((q,i)=>(
+          <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 0",borderBottom:i<2?"1px solid var(--border)":"none"}}>
+            <span className="dot" style={{background:"var(--accent)",marginTop:7}}/>
+            <span style={{fontSize:14,color:"var(--ink2)"}}>{q}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="spacer"/>
+
+      <div className="card">
+        <span className="tag" style={{marginBottom:14,display:"block"}}>Define Your Goal</span>
+        <div className="field">
+          <label className="label">I will achieve</label>
+          <input className="input" placeholder="e.g. Lose 20 lbs, Save $5K, Pass AWS exam" value={f.goal} onChange={e=>u("goal",e.target.value)}/>
+        </div>
+        <div className="field">
+          <label className="label">By this date</label>
+          <input className="input" type="date" value={f.deadline} onChange={e=>u("deadline",e.target.value)}/>
+        </div>
+        <div className="field">
+          <label className="label">How will you track progress?</label>
+          <input className="input" placeholder="e.g. Body weight on scale (lbs)" value={f.metric} onChange={e=>u("metric",e.target.value)}/>
+          <p className="hint">The one number you'll check daily. Examples: scale weight, bank balance, test score, revenue.</p>
+        </div>
+        <div style={{display:"flex",gap:10}} className="field">
+          <div style={{flex:1}}><label className="label">Target</label><input className="input" type="number" placeholder="180" value={f.targetValue} onChange={e=>u("targetValue",e.target.value)}/></div>
+          <div style={{flex:1}}><label className="label">Starting</label><input className="input" type="number" placeholder="200" value={f.currentValue} onChange={e=>u("currentValue",e.target.value)}/></div>
+        </div>
+        <div>
+          <label className="label">Actions per day</label>
+          <input className="input" type="number" placeholder="4" value={f.dailyQuota} onChange={e=>u("dailyQuota",e.target.value)}/>
+          <p className="hint">Not hours — actions. Pick a number you can hit on your worst day.</p>
+        </div>
+      </div>
+
+      <div className="card">
+        <span className="tag" style={{marginBottom:6,display:"block"}}>Actions by Priority</span>
+        <p className="hint" style={{marginTop:0,marginBottom:12}}>What you'll do each day, ranked by impact. #1 moves the needle most.</p>
+        {f.actions.map((a,i)=>{
+          const ph=["Most important action","Second priority","Third priority","Supporting action"];
+          return(
+          <div key={a.id} style={{display:"flex",gap:8,alignItems:"center",marginBottom:8}}>
+            <span style={{fontSize:14,fontWeight:700,color:"var(--accent)",minWidth:16,textAlign:"center"}}>{i+1}</span>
+            <input className="input" style={{flex:1}} placeholder={ph[i]||"Action "+(i+1)} value={a.name} onChange={e=>uA(i,e.target.value)}/>
+            {f.actions.length>1&&<button onClick={()=>rA(i)} style={{background:"none",border:"none",color:"var(--dim)",cursor:"pointer",fontSize:20,padding:"0 6px"}}>×</button>}
+          </div>
+        )})}
+        <button onClick={aA} className="btn-sec" style={{width:"100%",marginTop:6,fontSize:13}}>+ Add action</button>
+      </div>
+
+      <div className="card">
+        <span className="tag" style={{marginBottom:6,display:"block"}}>If-Then Rules</span>
+        <p className="hint" style={{marginTop:0,marginBottom:12}}>When something goes wrong, what's your move? Decide now so you don't have to think later.</p>
+        {f.rules.map((r,i)=>{
+          const sp=["e.g. I skip a day","e.g. No results after 2 weeks"];
+          const rp=["e.g. Do a smaller version instead","e.g. Change approach, not effort"];
+          return(
+          <div key={i} style={{marginBottom:12,paddingBottom:12,borderBottom:"1px solid var(--border)"}}>
+            <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}>
+              <span style={{fontSize:13,fontWeight:700,color:"var(--accent)",minWidth:32}}>IF</span>
+              <input className="input" style={{flex:1,fontSize:14}} placeholder={sp[i]||"something goes wrong..."} value={r.signal} onChange={e=>uR(i,"signal",e.target.value)}/>
+              {f.rules.length>1&&<button onClick={()=>rR(i)} style={{background:"none",border:"none",color:"var(--dim)",cursor:"pointer",fontSize:20}}>×</button>}
+            </div>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <span style={{fontSize:13,fontWeight:700,color:"var(--green)",minWidth:32}}>THEN</span>
+              <input className="input" style={{flex:1,fontSize:14}} placeholder={rp[i]||"here's my fix..."} value={r.response} onChange={e=>uR(i,"response",e.target.value)}/>
+            </div>
+          </div>
+        )})}
+        <button onClick={aR} className="btn-sec" style={{width:"100%",fontSize:13}}>+ Add rule</button>
+      </div>
+
+      <div style={{height:8}}/>
+      <button className="btn" disabled={!ok} onClick={()=>ok&&onSave({...f,targetValue:Number(f.targetValue),currentValue:Number(f.currentValue),dailyQuota:Number(f.dailyQuota),createdAt:today()})}>Activate Machine</button>
+      <p style={{textAlign:"center",fontSize:12,color:"var(--dim2)",marginTop:12}}>All data stays on your device.</p>
+    </div>
+  );
+}
+
+// ━━━ DASHBOARD ━━━
+function DashView({config:c,logs}){
+  const td=today(),dl=daysB(td,c.deadline),tot=Math.max(1,daysB(c.createdAt,c.deadline)),el=tot-dl;
+  const dec=Number(c.currentValue)>Number(c.targetValue);
+  const delta=Math.abs(c.targetValue-Number(c.currentValue));
+  const latest=logs.length?logs[logs.length-1].outputValue:Number(c.currentValue);
+  const prog=dec?Number(c.currentValue)-latest:latest-Number(c.currentValue);
+  const pp=pct(Math.max(0,prog),delta);
+  const rem=delta-Math.max(0,prog);
+  const rp=dl>0?(rem/dl).toFixed(1):"—";
+  const ap=el>0?(Math.max(0,prog)/el).toFixed(1):"0";
+  const gp=rp!=="—"&&Number(ap)>0?Math.max(0,100-pct(Number(ap),Number(rp))):el===0?0:80;
+  const ps=gp<=10?{l:"ON PACE",c:"#00ba7c"}:gp<=40?{l:"BEHIND",c:"#e8912e"}:{l:"OFF PACE",c:"#f4212e"};
+  const chartData=logs.map((l,i)=>({v:l.outputValue,t:dec?Number(c.currentValue)-(delta/tot*(i+1)):Number(c.currentValue)+(delta/tot*(i+1))}));
+  let streak=0;for(let i=logs.length-1;i>=0;i--){if(logs[i].actionsCompleted>=c.dailyQuota)streak++;else break;}
+
+  return(
+    <div>
+      <div style={{padding:"32px 0 20px"}}>
+        <p style={{fontSize:12,color:"var(--dim)",fontWeight:500}}>Current Goal</p>
+        <h1 className="h1" style={{marginTop:4}}>{c.goal}</h1>
+        <div className="row" style={{marginTop:10,gap:8}}>
+          <span className="pill" style={{color:ps.c,background:ps.c+"12"}}>{ps.l}</span>
+          <span style={{fontSize:13,color:"var(--dim)"}}>{c.metric} · {c.deadline}</span>
+        </div>
+      </div>
+
+      <div className="card" style={{display:"flex",alignItems:"center",gap:20}}>
+        <div style={{position:"relative",flexShrink:0}}>
+          <ProgressRing percent={pp} color={ps.c}/>
+          <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}>
+            <span style={{fontSize:28,fontWeight:800,color:ps.c}}>{pp}%</span>
+          </div>
+        </div>
+        <div style={{flex:1}}>
+          <div style={{marginBottom:12}}><span style={{fontSize:13,color:"var(--dim)"}}>Days left</span><div style={{fontSize:26,fontWeight:800,marginTop:2}}>{dl}</div></div>
+          <div><span style={{fontSize:13,color:"var(--dim)"}}>Streak</span><div style={{fontSize:26,fontWeight:800,marginTop:2,color:streak>=3?"var(--green)":"var(--ink)"}}>{streak}<span style={{fontSize:14,fontWeight:500,color:"var(--dim)",marginLeft:4}}>day{streak!==1?"s":""}</span></div></div>
+        </div>
+      </div>
+
+      <div className="card" style={{display:"flex",padding:0,overflow:"hidden"}}>
+        <div className="stat-box" style={{borderRight:"1px solid var(--border)"}}><div className="stat-val" style={{color:ps.c}}>{ap}</div><div className="stat-label">Your pace</div></div>
+        <div className="stat-box" style={{borderRight:"1px solid var(--border)"}}><div className="stat-val">{rp}</div><div className="stat-label">Needed</div></div>
+        <div className="stat-box"><div className="stat-val">{latest}</div><div className="stat-label">Current</div></div>
+      </div>
+
+      <GapGauge gapPct={gp}/>
+
+      {chartData.length>1&&(
+        <div className="card">
+          <span className="h3" style={{marginBottom:10,display:"block"}}>Trend</span>
+          <AreaChartSVG data={chartData}/>
+          <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"var(--dim)",marginTop:8}}>
+            <span>Day 1</span><span>Day {chartData.length}</span>
+          </div>
+        </div>
+      )}
+
+      <div className="card">
+        <span className="h3" style={{marginBottom:8,display:"block"}}>Priority Stack</span>
+        {c.actions.filter(a=>a.name).map((a,i)=>(
+          <div key={a.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:i<c.actions.filter(a=>a.name).length-1?"1px solid var(--border)":"none"}}>
+            <span style={{fontSize:13,fontWeight:700,color:i===0?"var(--accent)":"var(--dim)",minWidth:16}}>{i+1}</span>
+            <span style={{fontSize:15}}>{a.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ━━━ DAILY ━━━
+function DailyView({config:c,logs,onLog}){
+  const td=today(),ex=logs.find(l=>l.date===td);
+  const[acts,setActs]=useState(()=>c.actions.filter(a=>a.name).map(a=>({...a,done:false,quality:false})));
+  const[ov,setOv]=useState(ex?.outputValue??"");
+  const[blanks,setBlanks]=useState(0);
+  const[best,setBest]=useState("");
+  const[imp,setImp]=useState("");
+  const[notes,setNotes]=useState("");
+  const[saved,setSaved]=useState(!!ex);
+  useEffect(()=>{if(ex){setOv(ex.outputValue);setBest(ex.bestAction||"");setImp(ex.improvement||"");setNotes(ex.notes||"")}},[]);
+
+  const done=acts.filter(a=>a.done&&a.quality).length;
+  const met=done>=c.dailyQuota;
+
+  return(
+    <div>
+      <div style={{padding:"32px 0 20px"}}>
+        <p style={{fontSize:12,color:"var(--dim)",fontWeight:500}}>{new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</p>
+        <h1 className="h1" style={{marginTop:4}}>Daily Loop</h1>
+      </div>
+
+      <div className="card" style={{borderColor:met?"var(--green)":"var(--border)"}}>
+        <div className="row" style={{justifyContent:"space-between",marginBottom:10}}>
+          <span className="h3" style={{margin:0}}>Quota</span>
+          <span style={{fontSize:22,fontWeight:800,color:met?"var(--green)":"var(--accent)"}}>{done}/{c.dailyQuota}</span>
+        </div>
+        <div className="prog-track">
+          <div className={"prog-fill"+(met?" prog-fill-green":"")} style={{width:pct(done,c.dailyQuota)+"%"}}/>
+        </div>
+      </div>
+
+      {blanks>=5&&(
+        <div className="card" style={{borderColor:"var(--red)"}}>
+          <div style={{fontWeight:700,color:"var(--red)",marginBottom:4}}>⚡ Circuit Breaker</div>
+          <p style={{fontSize:14,color:"var(--dim)"}}>5 blanks in a row. Switch targets or change your method.</p>
+        </div>
+      )}
+
+      <div className="card">
+        <span className="h3" style={{display:"block"}}>Actions</span>
+        <p style={{fontSize:13,color:"var(--dim)",marginBottom:4}}>Both boxes = counts toward quota</p>
+        {acts.map((a,i)=>(
+          <div key={a.id} className="action-item">
+            <div style={{display:"flex",alignItems:"center",gap:10}}>
+              <span style={{fontSize:14,fontWeight:700,color:a.done&&a.quality?"var(--green)":"var(--dim)",minWidth:16}}>{i+1}</span>
+              <span className={a.done&&a.quality?"action-done":""} style={{flex:1,fontSize:15}}>{a.name}</span>
+            </div>
+            <div className="action-checks">
+              <label><input type="checkbox" checked={a.done} onChange={()=>{const u=[...acts];u[i]={...u[i],done:!u[i].done};setActs(u)}}/>Did it</label>
+              <label><input type="checkbox" checked={a.quality} disabled={!a.done} onChange={()=>{const u=[...acts];u[i]={...u[i],quality:!u[i].quality};setActs(u)}} style={{accentColor:"#00ba7c"}}/>Done right</label>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="row" style={{justifyContent:"space-between"}}>
+          <span className="h3" style={{margin:0}}>Blanks</span>
+          <div className="row" style={{gap:4}}>
+            <button className="btn-sec" style={{padding:"6px 14px",fontSize:16,lineHeight:1,borderRadius:8}} onClick={()=>setBlanks(Math.max(0,blanks-1))}>−</button>
+            <span style={{fontSize:22,fontWeight:800,minWidth:32,textAlign:"center",color:blanks>=5?"var(--red)":blanks>=3?"var(--accent)":"var(--ink)"}}>{blanks}</span>
+            <button className="btn-sec" style={{padding:"6px 14px",fontSize:16,lineHeight:1,borderRadius:8}} onClick={()=>setBlanks(blanks+1)}>+</button>
+          </div>
+        </div>
+        <p className="hint">Zero-signal actions in a row. Reset on response.</p>
+      </div>
+
+      <div className="divider"/>
+
+      <div className="field"><label className="label">Today's output ({c.metric})</label><input className="input" type="number" value={ov} onChange={e=>setOv(e.target.value)} placeholder="Current value"/></div>
+      <div className="field"><label className="label">Best action today?</label><input className="input" value={best} onChange={e=>setBest(e.target.value)} placeholder="What worked?"/></div>
+      <div className="field"><label className="label">One system improvement</label><input className="input" value={imp} onChange={e=>setImp(e.target.value)} placeholder="Template or rule to update"/></div>
+      <div className="field"><label className="label">Notes</label><textarea className="textarea" value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Anything worth capturing..."/></div>
+
+      <button className={"btn"+(saved?" btn-done":"")} onClick={()=>{
+        onLog({date:td,actionsCompleted:done,actionsTotal:acts.length,outputValue:Number(ov),bestAction:best,improvement:imp,notes,blanks});
+        setSaved(true);
+      }}>{saved?"✓ Saved — Tap to Update":"Save Today"}</button>
+    </div>
+  );
+}
+
+// ━━━ HISTORY ━━━
+function HistView({config:c,logs,onReset}){
+  const bd=logs.slice(-14).map(l=>({v:l.actionsCompleted}));
+  return(
+    <div>
+      <div style={{padding:"32px 0 20px"}}>
+        <h1 className="h1">History</h1>
+        <p style={{color:"var(--dim)",fontSize:14,marginTop:4}}>{logs.length} day{logs.length!==1?"s":""} logged</p>
+      </div>
+
+      {bd.length>1&&(
+        <div className="card">
+          <span className="h3" style={{display:"block",marginBottom:10}}>Last 14 Days</span>
+          <BarChart data={bd} quota={c.dailyQuota}/>
+        </div>
+      )}
+
+      {c.rules?.filter(r=>r.signal).length>0&&(
+        <div className="card">
+          <span className="h3" style={{display:"block",marginBottom:8}}>Rules</span>
+          {c.rules.filter(r=>r.signal).map((r,i)=>(
+            <div key={i} style={{padding:"10px 0",borderBottom:"1px solid var(--border)",fontSize:14}}>
+              <span style={{fontWeight:600,color:"var(--accent)"}}>IF</span> <span style={{color:"var(--ink2)"}}>{r.signal}</span> <span style={{fontWeight:600,color:"var(--green)",margin:"0 4px"}}>→</span> <span style={{color:"var(--ink2)"}}>{r.response}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {[...logs].reverse().map((l,i)=>(
+        <div key={i} className="card" style={{padding:14}}>
+          <div className="row" style={{justifyContent:"space-between",marginBottom:6}}>
+            <span style={{fontWeight:600,fontSize:14}}>{l.date}</span>
+            <span className="pill" style={{color:l.actionsCompleted>=c.dailyQuota?"#00ba7c":"#e8912e",background:(l.actionsCompleted>=c.dailyQuota?"#00ba7c":"#e8912e")+"12"}}>{l.actionsCompleted}/{l.actionsTotal}</span>
+          </div>
+          <div style={{fontSize:14,color:"var(--dim)"}}>{c.metric}: <span style={{color:"var(--ink)",fontWeight:600}}>{l.outputValue}</span>{l.bestAction&&<span> · {l.bestAction}</span>}</div>
+          {l.improvement&&<div style={{fontSize:13,color:"var(--green)",marginTop:4}}>↑ {l.improvement}</div>}
+        </div>
+      ))}
+      {!logs.length&&<p style={{color:"var(--dim)",textAlign:"center",padding:40}}>No logs yet.</p>}
+
+      <div className="divider"/>
+      <button className="btn-sec" style={{width:"100%",color:"var(--red)"}} onClick={onReset}>Reset Machine</button>
+    </div>
+  );
+}
+
+// ━━━ APP ━━━
+function App(){
+  const[loading,setLoading]=useState(true);
+  const[config,setConfig]=useState(null);
+  const[logs,setLogs]=useState([]);
+  const[view,setView]=useState("setup");
+
+  useEffect(()=>{const d=db.load();if(d?.config){setConfig(d.config);setLogs(d.logs||[]);setView("dash")}setLoading(false)},[]);
+
+  const persist=(c,l)=>db.save({config:c,logs:l});
+  const onSetup=c=>{setConfig(c);setLogs([]);persist(c,[]);setView("dash")};
+  const onLog=log=>{const u=[...logs.filter(l=>l.date!==log.date),log].sort((a,b)=>a.date.localeCompare(b.date));setLogs(u);persist(config,u)};
+  const onReset=()=>{if(confirm("Erase goal and all logs?")){setConfig(null);setLogs([]);setView("setup");db.save({config:null,logs:[]})}};
+
+  if(loading)return <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",color:"var(--dim)"}}>Loading…</div>;
+
+  return(
+    <div>
+      {!config&&<SetupView config={config} onSave={onSetup}/>}
+      {config&&view==="dash"&&<DashView config={config} logs={logs}/>}
+      {config&&view==="daily"&&<DailyView config={config} logs={logs} onLog={onLog}/>}
+      {config&&view==="history"&&<HistView config={config} logs={logs} onReset={onReset}/>}
+      {config&&(
+        <nav className="nav">
+          {[{id:"dash",l:"Dashboard",i:"◎"},{id:"daily",l:"Today",i:"↻"},{id:"history",l:"History",i:"☰"}].map(t=>(
+            <button key={t.id} className={view===t.id?"active":""} onClick={()=>setView(t.id)}>
+              <span className="nav-icon">{t.i}</span>{t.l}
+            </button>
+          ))}
+        </nav>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
