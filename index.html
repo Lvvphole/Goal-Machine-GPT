@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>Goal Machine v5.0</title>
-<meta name="theme-color" content="#050507"/>
+<meta name="theme-color" content="#F5F7FA"/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◎</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -14,11 +14,12 @@
 <<style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#050507;--surface:#0b0f14;--card:#121821;--card2:#1a202b;
-  --border:#252d3a;--border2:#343d4c;
-  --ink:#f2f4f7;--ink2:#d9dee7;--dim:#9aa3b2;--dim2:#697382;
-  --accent:#ff6a3d;--accent2:#ff8a3d;
-  --green:#25d07f;--red:#ff3b5f;
+  --bg:#F5F7FA;--surface:#FFFFFF;--card:#FFFFFF;--card2:#F8FAFC;
+  --border:#E5EAF0;--border2:#D8DEE8;
+  --ink:#111827;--ink2:#374151;--dim:#6B7280;--dim2:#9CA3AF;
+  --accent:#2563EB;--accent2:#1D4ED8;
+  --green:#16A34A;--red:#DC2626;
+}
 }
 html{
   background:var(--bg);color:var(--ink);
@@ -31,7 +32,9 @@ html{
 body{
   min-height:100dvh;
   overflow-x:hidden;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at top right,rgba(37,99,235,.08),transparent 28%),
+    var(--bg);
 }
 input,textarea,button{
   font-family:inherit;
@@ -50,11 +53,12 @@ input,textarea,button{
 .card{
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:20px;
-  padding:16px;
-  margin-bottom:12px;
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:14px;
   max-width:100%;
   overflow:hidden;
+  box-shadow:0 10px 28px rgba(17,24,39,.06);
 }
 
 /* Inputs */
@@ -63,7 +67,7 @@ input,textarea,button{
   width:100%;
   max-width:100%;
   min-width:0;
-  background:#0d1118;
+  background:#F8FAFC;
   border:1px solid var(--border2);
   border-radius:14px;
   color:var(--ink);
@@ -139,7 +143,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{
 .btn{
   display:block;
   width:100%;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  background:var(--accent);
   color:#fff;
   border:none;
   border-radius:9999px;
@@ -182,7 +186,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{
   display:inline-block;
   font-size:13px;
   font-weight:800;
-  color:var(--accent);
+  color:var(--ink2);
   letter-spacing:.12em;
   text-transform:uppercase;
 }
@@ -366,7 +370,7 @@ function SetupView({config,onSave}){
         <p style={{fontSize:14,fontWeight:600,color:"var(--accent)",marginBottom:12}}>Before you start — three checks:</p>
         {["Can you measure the result with a number?","Do people actually succeed doing it this way?","Can you do something every day that moves it forward?"].map((q,i)=>(
           <div key={i} style={{display:"flex",alignItems:"flex-start",gap:10,padding:"8px 0",borderBottom:i<2?"1px solid var(--border)":"none"}}>
-            <span className="dot" style={{background:"var(--accent)",marginTop:7}}/>
+            <span className="dot" style={{background:"var(--dim2)",marginTop:7}}/>
             <span style={{fontSize:14,color:"var(--ink2)"}}>{q}</span>
           </div>
         ))}
